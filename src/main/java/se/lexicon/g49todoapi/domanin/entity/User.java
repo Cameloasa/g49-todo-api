@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Builder
 
 @Entity
 public class User {
