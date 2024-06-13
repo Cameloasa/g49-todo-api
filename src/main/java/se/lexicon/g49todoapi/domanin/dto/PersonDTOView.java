@@ -14,6 +14,5 @@ import java.util.List;
 public class PersonDTOView {
     private Long id;
     private String name;
-    private User user;
-    private List<Task> tasks;
+
 }

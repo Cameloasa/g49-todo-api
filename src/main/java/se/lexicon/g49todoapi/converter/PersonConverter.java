@@ -5,9 +5,7 @@ import se.lexicon.g49todoapi.domanin.dto.PersonDTOView;
 import se.lexicon.g49todoapi.domanin.entity.Person;
 
 public interface PersonConverter {
-    PersonDTOView toPersonDTO(Person entity);
-    Person toPersonEntity(PersonDTOView dto);
-    PersonDTOForm toPersonDTOForm(Person entity);
-
+    PersonDTOView toPersonDTOView(Person entity);
+    Person toPersonEntity(PersonDTOForm dtoForm);
 
 }

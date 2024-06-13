@@ -15,4 +15,6 @@ public class TaskDTOView {
     private String title;
     private String description;
     private Person person;
+    private LocalDate Deadline;
+    private boolean done;
 }
