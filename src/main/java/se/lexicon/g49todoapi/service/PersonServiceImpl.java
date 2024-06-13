@@ -5,6 +5,7 @@ import se.lexicon.g49todoapi.converter.PersonConverter;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOView;
 import se.lexicon.g49todoapi.domanin.entity.Person;
+import se.lexicon.g49todoapi.domanin.entity.Task;
 import se.lexicon.g49todoapi.exception.DataDuplicateException;
 import se.lexicon.g49todoapi.exception.DataNotFoundException;
 import se.lexicon.g49todoapi.repository.PersonRepository;
@@ -26,7 +27,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonDTOView create(PersonDTOForm dtoForm) {
         //Check the param
-        if(dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
+        if(dtoForm == null) throw new IllegalArgumentException("This Form is cannot be accepted.");
         //2. Check if the person exist in the database
         boolean personExists = personRepository.existsById(dtoForm.getId());
         //3.if person exist throw an Exception - Data Duplicate Exception
@@ -43,7 +44,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDTOView findById(Long id) {
-        //1.Find the person by id in repository
+        //1.Find the person by id in repository else throw exception
         Person person = personRepository.findById(id)
                 .orElseThrow(()-> new DataNotFoundException("The Person does not exist."));
         //2.Convert to DTO view
