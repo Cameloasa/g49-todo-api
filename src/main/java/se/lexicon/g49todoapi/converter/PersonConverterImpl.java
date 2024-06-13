@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class PersonConverterImpl implements PersonConverter {
 
     @Override
-    public PersonDTOView toDTO(Person entity) {
+    public PersonDTOView toPersonDTO(Person entity) {
         return PersonDTOView.builder()
                 .id(entity.getId())
                 .name(entity.getName())
