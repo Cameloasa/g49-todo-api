@@ -25,4 +25,5 @@ public interface TaskService {
     List<TaskDTOView> findByPersonIsNull();
     //findAllUnfinishedTasksAndOverdue
     List<TaskDTOView> findUnfinishedAndOverdueTasks();
+    TaskDTOView addTaskToPerson(Long personId, TaskDTOForm taskDTOForm);
 }

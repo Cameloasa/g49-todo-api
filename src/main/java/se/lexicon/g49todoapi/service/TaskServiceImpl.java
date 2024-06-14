@@ -4,12 +4,14 @@ import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.lexicon.g49todoapi.converter.TaskConverter;
+import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOView;
 import se.lexicon.g49todoapi.domanin.entity.Person;
 import se.lexicon.g49todoapi.domanin.entity.Task;
 import se.lexicon.g49todoapi.exception.DataDuplicateException;
 import se.lexicon.g49todoapi.exception.DataNotFoundException;
+import se.lexicon.g49todoapi.repository.PersonRepository;
 import se.lexicon.g49todoapi.repository.TaskRepository;
 
 import java.time.LocalDate;
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
     private TaskRepository taskRepository;
     private TaskConverter taskConverter;
+    private PersonRepository personRepository;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository, TaskConverter taskConverter) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskConverter taskConverter, PersonRepository personRepository) {
         this.taskRepository = taskRepository;
         this.taskConverter = taskConverter;
+        this.personRepository = personRepository;
     }
 
     @Override
@@ -56,10 +60,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDTOView update(TaskDTOForm dtoForm) {
         // Check the param
-        if(dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
+        if (dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
         // Find the existing task
         Task existingTask = taskRepository.findById(dtoForm.getId()).
-                orElseThrow(()-> new DataNotFoundException("The task does not exist."));
+                orElseThrow(() -> new DataNotFoundException("The task does not exist."));
         // Update the task details
         existingTask.setTitle(dtoForm.getTitle());
         existingTask.setDescription(dtoForm.getDescription());
@@ -73,7 +77,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void delete(Long id) {
         //Check if task exist by id in repository
-        if (!taskRepository.existsById(id) ) throw new DataNotFoundException("TaskDTOForm does not exist.");
+        if (!taskRepository.existsById(id)) throw new DataNotFoundException("TaskDTOForm does not exist.");
         //delete task from repository
         taskRepository.deleteById(id);
     }
@@ -82,7 +86,7 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDTOView> findByPersonId(Long personId) {
         List<Task> tasks = taskRepository.findByPersonId(personId);
 
-        return tasks.stream().map(taskConverter :: toTaskDTOView)
+        return tasks.stream().map(taskConverter::toTaskDTOView)
                 .collect(Collectors.toList());
     }
 
@@ -90,20 +94,31 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDTOView> findByDeadlineBetween(LocalDate startDate, LocalDate endDate) {
         List<Task> tasks = taskRepository.findByDeadlineBetween(startDate, endDate);
 
-        return tasks.stream().map(taskConverter :: toTaskDTOView)
+        return tasks.stream().map(taskConverter::toTaskDTOView)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<TaskDTOView> findByPersonIsNull() {
         List<Task> tasks = taskRepository.findByPersonIsNull();
-        return tasks.stream().map(taskConverter ::toTaskDTOView)
+        return tasks.stream().map(taskConverter::toTaskDTOView)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<TaskDTOView> findUnfinishedAndOverdueTasks() {
         List<Task> tasks = taskRepository.findUnfinishedAndOverdueTasks(LocalDate.now());
-        return tasks.stream().map(taskConverter :: toTaskDTOView).collect(Collectors.toList());
+        return tasks.stream().map(taskConverter::toTaskDTOView).collect(Collectors.toList());
     }
+
+    @Override
+    public TaskDTOView addTaskToPerson(Long personId, TaskDTOForm taskDTOForm) {
+        Person person = personRepository.findById(personId).orElseThrow(() -> new DataNotFoundException("Person not found"));
+        Task task = taskConverter.toTaskEntity(taskDTOForm);
+        task.setPerson(person);
+        taskRepository.save(task);
+        return taskConverter.toTaskDTOView(task);
+
+    }
+
 }
