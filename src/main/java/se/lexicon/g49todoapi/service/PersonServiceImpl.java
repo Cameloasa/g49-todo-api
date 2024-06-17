@@ -1,6 +1,7 @@
 package se.lexicon.g49todoapi.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.g49todoapi.converter.PersonConverter;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOView;
@@ -25,6 +26,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public PersonDTOView create(PersonDTOForm dtoForm) {
         //Check the param
         if(dtoForm == null) throw new IllegalArgumentException("This Form is cannot be accepted.");
@@ -62,6 +64,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public PersonDTOView update(PersonDTOForm dtoForm) {
         // Check the param
         if(dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
@@ -76,6 +79,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         // Check if the person exists
         if (!personRepository.existsById(id)) {

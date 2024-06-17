@@ -3,6 +3,7 @@ package se.lexicon.g49todoapi.service;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.g49todoapi.converter.TaskConverter;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOForm;
@@ -33,6 +34,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TaskDTOView create(TaskDTOForm dtoForm) {
         //Check if task exist in database
         if (dtoForm == null) throw new IllegalArgumentException("TaskDTOForm is null");
@@ -58,6 +60,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TaskDTOView update(TaskDTOForm dtoForm) {
         // Check the param
         if (dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
@@ -75,6 +78,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void delete(Long id) {
         //Check if task exist by id in repository
         if (!taskRepository.existsById(id)) throw new DataNotFoundException("TaskDTOForm does not exist.");
@@ -112,6 +116,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TaskDTOView addTaskToPerson(Long personId, TaskDTOForm taskDTOForm) {
         Person person = personRepository.findById(personId).orElseThrow(() -> new DataNotFoundException("Person not found"));
         Task task = taskConverter.toTaskEntity(taskDTOForm);

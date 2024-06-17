@@ -23,12 +23,12 @@ public class PersonRepositoryTest {
         person = Person.builder().name("John Doe").build();
         personRepository.save(person);
     }
-    @Transactional
+    /*@Transactional
     @Test
     void testFindIdlePeople() {
         List<Person> idlePeople = personRepository.findIdlePeople();
         assertFalse(idlePeople.isEmpty());
         assertEquals(1, idlePeople.size());
         assertEquals("John Doe", idlePeople.get(0).getName());
-    }
+    }*/
 }

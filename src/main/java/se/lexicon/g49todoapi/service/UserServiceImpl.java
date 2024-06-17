@@ -3,6 +3,7 @@ package se.lexicon.g49todoapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.g49todoapi.domanin.dto.RoleDTOView;
 import se.lexicon.g49todoapi.domanin.dto.UserDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.UserDTOView;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserDTOView register(UserDTOForm dtoForm) {
         //1.Check the param
         if (dtoForm == null) throw new IllegalArgumentException("UserDTOForm cannot be null");
@@ -96,6 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void disableEmail(String email) {
         isEmailTaken(email);
         userRepository.updateExpiredByEmail(email,true);
@@ -103,6 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void enableEmail(String email) {
         isEmailTaken(email);
         userRepository.updateExpiredByEmail(email,false);

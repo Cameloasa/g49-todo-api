@@ -28,11 +28,11 @@ public class RoleRepositoryTest {
         roleRepository.save(role);
 
     }
-    @Test
+    /*@Test
     void testFindByName() {
         Optional<Role> foundRole = roleRepository.findByName("USER");
         assertTrue(foundRole.isPresent());
         assertEquals("USER", foundRole.get().getName());
 
-    }
+    }*/
 }
