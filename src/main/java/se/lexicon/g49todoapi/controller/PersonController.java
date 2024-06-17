@@ -1,7 +1,59 @@
 package se.lexicon.g49todoapi.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.lexicon.g49todoapi.domanin.dto.*;
+import se.lexicon.g49todoapi.domanin.entity.Person;
+import se.lexicon.g49todoapi.service.PersonService;
 
+import java.util.List;
+
+@RequestMapping("api/v1/persons")
 @RestController
 public class PersonController {
+
+    private final PersonService personService;
+
+    @Autowired
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
+
+    @PostMapping
+    public ResponseEntity<PersonDTOView> doCreate(@RequestBody PersonDTOForm dtoForm) {
+        System.out.println("DTO Form: " + dtoForm);
+        PersonDTOView responseBody = personService.create(dtoForm);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+    }
+
+    @GetMapping
+    public ResponseEntity<PersonDTOView> doFindPersonById(@RequestParam Long id) {
+        System.out.println(">>>>>>> get Person by Id has been executed");
+        System.out.println("Id: " + id);
+
+        PersonDTOView responseBody = personService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PersonDTOView>>doFindAllRoles(){
+        List<PersonDTOView> responseBody = personService.findAll();
+        return ResponseEntity.ok(responseBody);
+
+    }
+    @PutMapping("/update")
+    public ResponseEntity<Void> doUpdate(@RequestParam PersonDTOForm dtoForm) {
+        System.out.println(">>>>>>> Updated Person By DTO form has been executed");
+        personService.update(dtoForm);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/delete")
+    public ResponseEntity<Void> doDelete(@RequestParam Long id) {
+        System.out.println(">>>>>>> Deleted Person By Id has been executed");
+        personService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
