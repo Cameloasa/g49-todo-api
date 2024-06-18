@@ -28,8 +28,8 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @GetMapping
-    public ResponseEntity<PersonDTOView> doFindPersonById(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonDTOView> doFindPersonById(@PathVariable Long id) {
         System.out.println(">>>>>>> get Person by Id has been executed");
         System.out.println("Id: " + id);
 
@@ -37,21 +37,21 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
-    @GetMapping
+    @GetMapping("/roles")
     public ResponseEntity<List<PersonDTOView>>doFindAllRoles(){
         List<PersonDTOView> responseBody = personService.findAll();
         return ResponseEntity.ok(responseBody);
 
     }
     @PutMapping("/update")
-    public ResponseEntity<Void> doUpdate(@RequestParam PersonDTOForm dtoForm) {
+    public ResponseEntity<Void> doUpdate(@RequestBody PersonDTOForm dtoForm) {
         System.out.println(">>>>>>> Updated Person By DTO form has been executed");
         personService.update(dtoForm);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/delete")
-    public ResponseEntity<Void> doDelete(@RequestParam Long id) {
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Void> doDelete(@PathVariable Long id) {
         System.out.println(">>>>>>> Deleted Person By Id has been executed");
         personService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
