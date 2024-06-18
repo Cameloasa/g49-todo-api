@@ -1,15 +1,20 @@
 package se.lexicon.g49todoapi.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.lexicon.g49todoapi.converter.PersonConverter;
+
+import se.lexicon.g49todoapi.converter.UserConverter;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.PersonDTOView;
 import se.lexicon.g49todoapi.domanin.entity.Person;
-import se.lexicon.g49todoapi.domanin.entity.Task;
+
+import se.lexicon.g49todoapi.domanin.entity.User;
 import se.lexicon.g49todoapi.exception.DataDuplicateException;
 import se.lexicon.g49todoapi.exception.DataNotFoundException;
 import se.lexicon.g49todoapi.repository.PersonRepository;
+import se.lexicon.g49todoapi.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +22,18 @@ import java.util.stream.Collectors;
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    private PersonRepository personRepository;
-    private PersonConverter personConverter;
+    private final PersonRepository personRepository;
+    private final PersonConverter personConverter;
+    private final UserRepository userRepository;
+    private final UserConverter userConverter;
 
-    public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter) {
+
+    @Autowired
+    public PersonServiceImpl(PersonRepository personRepository, PersonConverter personConverter, UserRepository userRepository, UserConverter userConverter) {
         this.personRepository = personRepository;
         this.personConverter = personConverter;
+        this.userRepository = userRepository;
+        this.userConverter = userConverter;
     }
 
     @Override
@@ -74,7 +85,12 @@ public class PersonServiceImpl implements PersonService {
         // Update the person's details
         existingPerson.setName(dtoForm.getName());
         // Update associated user if email is provided
-
+        if (dtoForm.getUserEmail() != null && userRepository.existsByEmail(dtoForm.getUserEmail())) {
+            User user = userRepository.findByEmail(dtoForm.getUserEmail())
+                    .orElseThrow(() -> new DataNotFoundException("The User does not exist."));
+            existingPerson.setUser(user);
+        }
+        //Save the updated person
         Person updatedPerson = personRepository.save(existingPerson);
         // Convert to DTO view and return
         return personConverter.toPersonDTOView(updatedPerson);

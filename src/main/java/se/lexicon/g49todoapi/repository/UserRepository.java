@@ -7,11 +7,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import se.lexicon.g49todoapi.domanin.entity.User;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
     //Check if the email exists in the database
     Boolean existsByEmail(String email);
+
+    Optional<User> findByEmail(String email);
 
     //Update expired by email
     @Modifying
