@@ -73,6 +73,8 @@ public class PersonServiceImpl implements PersonService {
                 orElseThrow(()-> new DataNotFoundException("The Person does not exist."));
         // Update the person's details
         existingPerson.setName(dtoForm.getName());
+        // Update associated user if email is provided
+
         Person updatedPerson = personRepository.save(existingPerson);
         // Convert to DTO view and return
         return personConverter.toPersonDTOView(updatedPerson);
