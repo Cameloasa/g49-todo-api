@@ -2,16 +2,13 @@ package se.lexicon.g49todoapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
-import se.lexicon.g49todoapi.domanin.dto.PersonDTOView;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOView;
 import se.lexicon.g49todoapi.service.TaskService;
 
-import java.util.List;
+
 
 @RequestMapping("api/v1/tasks")
 @RestController

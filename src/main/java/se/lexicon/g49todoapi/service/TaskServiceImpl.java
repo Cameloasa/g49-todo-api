@@ -1,11 +1,9 @@
 package se.lexicon.g49todoapi.service;
 
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.lexicon.g49todoapi.converter.PersonConverter;
 import se.lexicon.g49todoapi.converter.TaskConverter;
-import se.lexicon.g49todoapi.domanin.dto.PersonDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.TaskDTOView;
 import se.lexicon.g49todoapi.domanin.entity.Person;
@@ -17,7 +15,6 @@ import se.lexicon.g49todoapi.repository.TaskRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,16 +22,17 @@ public class TaskServiceImpl implements TaskService {
     private TaskRepository taskRepository;
     private TaskConverter taskConverter;
     private PersonRepository personRepository;
+    private PersonConverter personConverter;
 
-    @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository, TaskConverter taskConverter, PersonRepository personRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskConverter taskConverter, PersonRepository personRepository, PersonConverter personConverter) {
         this.taskRepository = taskRepository;
         this.taskConverter = taskConverter;
         this.personRepository = personRepository;
+        this.personConverter = personConverter;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public TaskDTOView create(TaskDTOForm dtoForm) {
         //Check if task exist in database
         if (dtoForm == null) throw new IllegalArgumentException("TaskDTOForm is null");
@@ -44,6 +42,14 @@ public class TaskServiceImpl implements TaskService {
             throw new DataDuplicateException("Task already exists");
         //Convert TaskDTOForm to TaskEntity using converter
         Task task = taskConverter.toTaskEntity(dtoForm);
+
+        // Check if the person exists and set it to the task
+        if (dtoForm.getPerson() != null) {
+            Long personId = dtoForm.getPerson().getId();
+            Person person = personRepository.findById(personId)
+                    .orElseThrow(() -> new DataNotFoundException("Person not found with id: " + personId));
+            task.setPerson(person);
+        }
         //Save task to the database
         Task savedTask = taskRepository.save(task);
         //Convert savedTask to TaskDTOView and return
@@ -60,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public TaskDTOView update(TaskDTOForm dtoForm) {
         // Check the param
         if (dtoForm == null) throw new IllegalArgumentException("This Form is not accepted.");
@@ -71,14 +77,23 @@ public class TaskServiceImpl implements TaskService {
         existingTask.setTitle(dtoForm.getTitle());
         existingTask.setDescription(dtoForm.getDescription());
         existingTask.setDeadline(dtoForm.getDeadline());
-        //existingTask.setPerson(findByPersonId());
+        existingTask.setDone(dtoForm.getDone());
+
+        // Check if the person exists and set it to the task
+        if (dtoForm.getPerson() != null) {
+            Long personId = dtoForm.getPerson().getId();
+            Person person = personRepository.findById(personId)
+                    .orElseThrow(() -> new DataNotFoundException("Person not found with id: " + personId));
+            existingTask.setPerson(person);
+        }
+       //Save the task
         Task updatedTask = taskRepository.save(existingTask);
         // Convert to DTO view and return
         return taskConverter.toTaskDTOView(updatedTask);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void delete(Long id) {
         //Check if task exist by id in repository
         if (!taskRepository.existsById(id)) throw new DataNotFoundException("TaskDTOForm does not exist.");
@@ -116,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public TaskDTOView addTaskToPerson(Long personId, TaskDTOForm taskDTOForm) {
         Person person = personRepository.findById(personId).orElseThrow(() -> new DataNotFoundException("Person not found"));
         Task task = taskConverter.toTaskEntity(taskDTOForm);
