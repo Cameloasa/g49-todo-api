@@ -1,5 +1,8 @@
 package se.lexicon.g49todoapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,6 +17,7 @@ import se.lexicon.g49todoapi.domanin.dto.UserDTOForm;
 import se.lexicon.g49todoapi.domanin.dto.UserDTOView;
 import se.lexicon.g49todoapi.service.UserService;
 
+@CrossOrigin(origins = "http://localhost:3000") // Replace with your frontend URL
 @RequestMapping("api/v1/users")
 @RestController
 @Validated
@@ -26,6 +30,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Registers a new user", description = "Creates a new user in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     @PostMapping
     public ResponseEntity<UserDTOView>doRegister(@RequestBody @Valid UserDTOForm dtoForm) {
         System.out.println("DTO Form: " + dtoForm);

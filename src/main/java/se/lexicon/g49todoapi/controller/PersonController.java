@@ -9,7 +9,7 @@ import se.lexicon.g49todoapi.domanin.entity.Person;
 import se.lexicon.g49todoapi.service.PersonService;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000") // Replace with your frontend URL
 @RequestMapping("api/v1/persons")
 @RestController
 public class PersonController {

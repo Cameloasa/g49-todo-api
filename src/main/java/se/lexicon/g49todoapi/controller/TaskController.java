@@ -9,7 +9,7 @@ import se.lexicon.g49todoapi.domanin.dto.TaskDTOView;
 import se.lexicon.g49todoapi.service.TaskService;
 
 
-
+@CrossOrigin(origins = "http://localhost:3000") // Replace with your frontend URL
 @RequestMapping("api/v1/tasks")
 @RestController
 public class TaskController {
